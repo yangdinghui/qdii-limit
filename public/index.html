@@ -10,6 +10,8 @@
     />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
     <script>
       // 首屏前应用主题，避免明暗切换闪烁
       ;(function () {
@@ -92,6 +94,7 @@
                 <h2>基金列表</h2>
                 <p id="filtered-count">当前筛选 0 条</p>
               </div>
+              <div class="sort-control" id="sort-control"></div>
             </header>
             <div class="table-wrap">
               <table class="fund-table">

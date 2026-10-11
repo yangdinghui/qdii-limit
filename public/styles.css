@@ -107,6 +107,7 @@ html.dark {
 body {
   margin: 0;
   min-height: 100vh;
+  -webkit-text-size-adjust: 100%;
   font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial,
     "Noto Sans", sans-serif;
   font-size: 16px;
@@ -138,7 +139,11 @@ h2 {
 .container {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  /* 兼容刘海屏的横向安全区 */
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -152,13 +157,15 @@ h2 {
 
 @media (min-width: 640px) {
   .container {
-    padding: 2rem 1.5rem;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
   }
 }
 
 @media (min-width: 1024px) {
   .container {
-    padding: 2rem 2rem;
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
   }
 }
 
@@ -576,6 +583,46 @@ h2 {
   border-bottom: 1px solid var(--card-border);
 }
 
+/* 手机端没有可点的表头，用列表头右侧的排序控件代替（桌面端隐藏） */
+.sort-control {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.list-head .sort-control {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 767px) {
+  .list-head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .list-head .sort-control {
+    margin-top: 0;
+    display: flex;
+  }
+}
+
+.btn-compact .trigger-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sort-control .btn-compact {
+  max-width: 10rem;
+}
+
+.btn-icon {
+  width: 2.25rem;
+  padding: 0;
+  flex-shrink: 0;
+}
+
 .list-head h2 {
   font-size: 1rem;
   font-weight: 600;
@@ -589,12 +636,6 @@ h2 {
 
 .table-wrap {
   background: var(--card-bg);
-}
-
-@media (max-width: 900px) {
-  .table-wrap {
-    overflow-x: auto;
-  }
 }
 
 .fund-table {
@@ -630,9 +671,165 @@ h2 {
   width: 6rem;
 }
 
-@media (max-width: 900px) {
+/* ---------- 平板竖屏（768–1099px）：隐藏基金类型列，其余列完整显示，不再横向滚动 ---------- */
+@media (min-width: 768px) and (max-width: 1099px) {
   .fund-table {
-    min-width: 68rem;
+    min-width: 0;
+  }
+
+  .fund-table .col-code {
+    width: 8rem;
+  }
+
+  .fund-table .col-type {
+    width: 0;
+  }
+
+  .fund-table .col-status {
+    width: 8rem;
+  }
+
+  .fund-table .col-limit {
+    width: 9.5rem;
+  }
+
+  .fund-table .col-date {
+    width: 6rem;
+  }
+
+  /* 折叠「基金类型」列：用零宽 + 裁剪，不能 display:none ——
+     在固定列宽表格里隐藏单元格会让后续单元格整体左移一列，导致列错位。 */
+  .fund-table th:nth-child(3),
+  .fund-table td:nth-child(3) {
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .fund-table th:nth-child(3) .th-button {
+    visibility: hidden;
+  }
+}
+
+/* ---------- 手机（<768px）：表格改为卡片式行，状态与限额直接可见 ---------- */
+@media (max-width: 767px) {
+  .fund-table,
+  .fund-table tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .fund-table thead {
+    display: none;
+  }
+
+  .fund-table tbody tr {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "code  .     date"
+      "name  name  name"
+      "status limit type";
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.875rem 1rem;
+    border-top: 1px solid var(--card-border);
+  }
+
+  .fund-table tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .fund-table tbody td {
+    padding: 0;
+    border-top: 0;
+  }
+
+  .fund-table tbody td:nth-child(1) {
+    grid-area: code;
+  }
+
+  .fund-table tbody td:nth-child(2) {
+    grid-area: name;
+  }
+
+  .fund-table tbody td:nth-child(3) {
+    grid-area: type;
+    justify-self: end;
+    max-width: 11rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-soft);
+    font-size: 0.8125rem;
+  }
+
+  .fund-table tbody td:nth-child(4) {
+    grid-area: status;
+    justify-self: start;
+  }
+
+  .fund-table tbody td:nth-child(5) {
+    grid-area: limit;
+    justify-self: start;
+  }
+
+  .fund-table tbody td:nth-child(6) {
+    grid-area: date;
+    justify-self: end;
+    color: var(--text-soft);
+    font-size: 0.8125rem;
+  }
+
+  /* 空结果行需要整行铺满 */
+  .fund-table tbody td[colspan] {
+    grid-column: 1 / -1;
+  }
+
+  .cell-name {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ---------- 过滤条件：窄屏也用两列，减少首屏的纵向占用 ---------- */
+@media (min-width: 380px) and (max-width: 767px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- 触屏：放大点按目标、去掉只在悬停时才成立的反馈 ---------- */
+@media (pointer: coarse) {
+  .btn,
+  .btn-sm,
+  .btn-compact,
+  .btn-icon,
+  .filter-trigger,
+  .search-field input {
+    min-height: 2.75rem;
+  }
+
+  .btn-icon {
+    width: 2.75rem;
+  }
+
+  .menu-item {
+    padding: 0.625rem 0.5rem;
+  }
+
+  .th-button {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+@media (hover: none) {
+  .btn:hover:not(:disabled) {
+    background: var(--input-bg);
+  }
+
+  .menu-item:hover,
+  .fund-table tbody tr:hover {
+    background: transparent;
   }
 }
 

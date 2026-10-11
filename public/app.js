@@ -367,6 +367,47 @@ function updateToolbar(patch) {
 
 /* ---------- 渲染 ---------- */
 
+/** 手机端没有可点的表头，用列表头右侧的「排序字段 + 升降序」控件代替（桌面端 CSS 隐藏）。 */
+function renderSortControl() {
+  const root = $("#sort-control")
+  const activeLabel = COLUMNS.find(([id]) => id === state.sorting.id)?.[1] ?? "排序"
+
+  const columnControl = buildControl({
+    key: "sort-column",
+    iconName: "arrowUpDown",
+    summary: activeLabel,
+    triggerClass: "btn btn-compact",
+    closeOnPick: true,
+    ariaLabel: `排序字段（当前：${activeLabel}）`,
+    items: COLUMNS.map(([id, label]) => ({
+      label,
+      selected: state.sorting.id === id,
+      onPick: () => {
+        // 换列时重置方向：限额默认从高到低，其余默认升序；同列则保持当前方向
+        if (id !== state.sorting.id) state.sorting = { id, desc: id === "maxSubscribeAmount" }
+        state.page = 0
+        render()
+      },
+    })),
+  })
+
+  const directionButton = document.createElement("button")
+  directionButton.type = "button"
+  directionButton.className = "btn btn-compact btn-icon"
+  directionButton.setAttribute(
+    "aria-label",
+    state.sorting.desc ? "当前降序，点击切换为升序" : "当前升序，点击切换为降序",
+  )
+  directionButton.innerHTML = icon(state.sorting.desc ? "arrowDown" : "arrowUp")
+  directionButton.addEventListener("click", () => {
+    state.sorting = { id: state.sorting.id, desc: !state.sorting.desc }
+    state.page = 0
+    render()
+  })
+
+  root.replaceChildren(columnControl, directionButton)
+}
+
 function render() {
   renderUpdated()
   renderError()
@@ -378,6 +419,7 @@ function render() {
 
   if (!loading) {
     renderFilters()
+    renderSortControl()
     renderRefreshButton()
     renderTable()
   }
