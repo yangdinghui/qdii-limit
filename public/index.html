@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QDII 基金申购限额查询｜QDII Limit Monitor</title>
+    <meta
+      name="description"
+      content="快速查看、检索和监控 QDII 与海外基金的最新申购限额及状态。支持美国纳指 100、标普 500、港股科技、中概互联网等地区和主题的多选联动筛选。"
+    />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // 首屏前应用主题，避免明暗切换闪烁
+      ;(function () {
+        try {
+          var saved = localStorage.getItem("qdii-theme") || "system"
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+          document.documentElement.classList.toggle("dark", saved === "dark" || (saved === "system" && prefersDark))
+        } catch (error) {
+          /* 忽略隐私模式等异常 */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <main class="page">
+      <div class="container">
+        <header class="page-header">
+          <div class="brand">
+            <span class="pill">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                <path d="M2 12h20" />
+              </svg>
+              QDII Limit Monitor
+            </span>
+            <div>
+              <h1>QDII 基金限额看板</h1>
+              <p class="lead">追踪可申购 QDII 基金的单日申购额度、地区主题与开放状态。</p>
+            </div>
+          </div>
+          <div class="header-side">
+            <div id="theme-toggle-root"></div>
+            <div class="updated">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+              <span id="updated-at">最后更新：-</span>
+            </div>
+          </div>
+        </header>
+
+        <div id="error-root"></div>
+
+        <div id="skeleton" class="stack">
+          <div class="skeleton skeleton-toolbar"></div>
+          <div class="skeleton skeleton-table"></div>
+        </div>
+
+        <div id="dashboard" class="stack" hidden>
+          <section class="card toolbar">
+            <div class="toolbar-top">
+              <div class="search-field">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input id="search-input" type="search" autocomplete="off" placeholder="搜索基金代码、名称、类型" />
+              </div>
+              <button id="refresh-button" class="btn" type="button">
+                <span id="refresh-icon" class="icon-slot"></span>
+                <span>刷新数据</span>
+              </button>
+            </div>
+            <div class="filters">
+              <div class="filters-label">筛选条件</div>
+              <div class="filter-grid">
+                <div id="region-filter"></div>
+                <div id="theme-filter"></div>
+                <div id="status-filter"></div>
+                <div id="limit-filter"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card list-card">
+            <header class="list-head">
+              <div>
+                <h2>基金列表</h2>
+                <p id="filtered-count">当前筛选 0 条</p>
+              </div>
+            </header>
+            <div class="table-wrap">
+              <table class="fund-table">
+                <thead>
+                  <tr id="table-head-row"></tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+            <footer class="table-footer">
+              <div id="page-info">第 1 / 1 页 · 共 0 条</div>
+              <div class="pager">
+                <button id="prev-page" class="btn btn-sm" type="button">上一页</button>
+                <button id="next-page" class="btn btn-sm" type="button">下一页</button>
+              </div>
+            </footer>
+          </section>
+        </div>
+
+        <footer class="page-footer">
+          <span>QDII Limit Monitor</span>
+        </footer>
+      </div>
+    </main>
+
+    <div id="toast-root" class="toasts" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

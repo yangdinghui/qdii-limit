@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="QDII Limit Monitor">
+  <rect width="64" height="64" rx="14" fill="#0f172a" />
+  <circle cx="32" cy="32" r="17" fill="none" stroke="#3b82f6" stroke-width="4" />
+  <path d="M32 15a12 17 0 0 0 0 34a12 17 0 0 0 0-34" fill="none" stroke="#60a5fa" stroke-width="3" />
+  <path d="M15 32h34" stroke="#60a5fa" stroke-width="3" />
+  <path d="m40 40 9 9m0 0v-7m0 7h-7" fill="none" stroke="#22d3ee" stroke-width="4" stroke-linecap="round" />
+</svg>

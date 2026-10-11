@@ -1,0 +1,16 @@
+{
+  "name": "qdii-limit-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "仿写 qdii-limit.vercel.app：QDII 基金申购状态与日累计申购限额看板（零依赖 Node，可静态托管）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build:static": "node scripts/build-static.js",
+    "test": "node scripts/self-test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
