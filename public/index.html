@@ -42,7 +42,6 @@
             </div>
           </div>
           <div class="header-side">
-            <div id="theme-toggle-root"></div>
             <div class="updated">
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" />
@@ -50,6 +49,7 @@
               </svg>
               <span id="updated-at">最后更新：-</span>
             </div>
+            <div id="theme-toggle-root"></div>
           </div>
         </header>
 
@@ -95,6 +95,14 @@
             </header>
             <div class="table-wrap">
               <table class="fund-table">
+                <colgroup>
+                  <col class="col-code" />
+                  <col class="col-name" />
+                  <col class="col-type" />
+                  <col class="col-status" />
+                  <col class="col-limit" />
+                  <col class="col-date" />
+                </colgroup>
                 <thead>
                   <tr id="table-head-row"></tr>
                 </thead>
@@ -112,7 +120,10 @@
         </div>
 
         <footer class="page-footer">
-          <span>QDII Limit Monitor</span>
+          <div>QDII Limit Monitor</div>
+          <p class="footer-note">
+            数据来自东方财富公开接口，经自动分类整理，仅供研究参考，不构成投资建议。
+          </p>
         </footer>
       </div>
     </main>

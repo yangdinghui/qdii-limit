@@ -51,9 +51,9 @@ const LIMIT_OPTIONS = [
 ]
 
 const THEME_MODE_OPTIONS = [
-  ["light", "明亮", "明", "sun"],
-  ["dark", "暗色", "暗", "moon"],
-  ["system", "跟随系统", "系统", "laptop"],
+  { value: "light", label: "明亮", icon: "sun" },
+  { value: "dark", label: "暗色", icon: "moon" },
+  { value: "system", label: "跟随系统", icon: "laptop" },
 ]
 
 const COLUMNS = [
@@ -71,6 +71,8 @@ const ICON_PATHS = {
   chevronDown: '<path d="m6 9 6 6 6-6"/>',
   check: '<path d="M20 6 9 17l-5-5"/>',
   arrowUpDown: '<path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>',
+  arrowUp: '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',
+  arrowDown: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
   filter: '<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
   refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
   alertTriangle:
@@ -81,7 +83,7 @@ const ICON_PATHS = {
   helpCircle:
     '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
   circleAlert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
-  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
   moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
   laptop: '<path d="M18 5a2 2 0 0 1 2 2v8H4V7a2 2 0 0 1 2-2h12Z"/><path d="M2 19h20"/>',
 }
@@ -284,7 +286,7 @@ function applyThemeMode(mode) {
 }
 
 function getThemeModeOption() {
-  return THEME_MODE_OPTIONS.find(([value]) => value === state.themeMode) ?? THEME_MODE_OPTIONS[2]
+  return THEME_MODE_OPTIONS.find((option) => option.value === state.themeMode) ?? THEME_MODE_OPTIONS[2]
 }
 
 /* ---------- 下拉控件 ---------- */
@@ -404,21 +406,21 @@ function renderError() {
 }
 
 function renderThemeToggle() {
-  const [, modeLabel, shortLabel, iconName] = getThemeModeOption()
+  const current = getThemeModeOption()
   $("#theme-toggle-root").replaceChildren(
     buildControl({
       key: "theme-mode",
-      iconName,
-      summary: shortLabel,
+      iconName: current.icon,
+      summary: current.label,
       end: true,
-      triggerClass: "btn btn-sm",
+      triggerClass: "btn btn-compact",
       closeOnPick: true,
-      ariaLabel: `切换主题（当前：${modeLabel}）`,
-      items: THEME_MODE_OPTIONS.map(([value, label]) => ({
-        label,
-        selected: state.themeMode === value,
+      ariaLabel: `切换主题（当前：${current.label}）`,
+      items: THEME_MODE_OPTIONS.map((option) => ({
+        label: option.label,
+        selected: state.themeMode === option.value,
         onPick: () => {
-          applyThemeMode(value)
+          applyThemeMode(option.value)
           render()
         },
       })),
@@ -556,8 +558,10 @@ function renderTable() {
 
   const head = $("#table-head-row")
   head.innerHTML = COLUMNS.map(([id, label]) => {
-    const sorted = state.sorting.id === id
-    return `<th><button type="button" class="th-button${sorted ? " is-sorted" : ""}" data-sort="${id}">${escapeHtml(label)}${icon("arrowUpDown")}</button></th>`
+    const active = state.sorting.id === id
+    const sortIcon = active ? (state.sorting.desc ? "arrowDown" : "arrowUp") : "arrowUpDown"
+    const ariaSort = active ? ` aria-sort="${state.sorting.desc ? "descending" : "ascending"}"` : ""
+    return `<th${ariaSort}><button type="button" class="th-button${active ? " is-sorted" : ""}" data-sort="${id}">${escapeHtml(label)}${icon(sortIcon)}</button></th>`
   }).join("")
   head.querySelectorAll("[data-sort]").forEach((button) => {
     button.addEventListener("click", () => toggleSort(button.dataset.sort))
