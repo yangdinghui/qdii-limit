@@ -449,7 +449,7 @@ function renderError() {
 
 function renderThemeToggle() {
   const current = getThemeModeOption()
-  $("#theme-toggle-root").replaceChildren(
+  const build = () =>
     buildControl({
       key: "theme-mode",
       iconName: current.icon,
@@ -466,8 +466,11 @@ function renderThemeToggle() {
           render()
         },
       })),
-    }),
-  )
+    })
+
+  // 宽屏放在「最后更新」行右侧；窄屏由 CSS 切到标题行右上角那个
+  $("#theme-toggle-root").replaceChildren(build())
+  $("#theme-toggle-compact").replaceChildren(build())
 }
 
 function renderRefreshButton() {
