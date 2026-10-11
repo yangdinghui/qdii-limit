@@ -291,6 +291,8 @@ h2 {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
+  /* 兜底：万一图标出现在行内语境里，也对齐到文字中部而不是基线 */
+  vertical-align: middle;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -469,6 +471,26 @@ h2 {
   color: var(--text-body);
 }
 
+/* 图标 + 文字的标签：必须是 flex 且居中对齐。
+   注意不能只在 .filter-trigger 下定义——主题切换、手机端排序控件用的是 .btn-compact，
+   少了这条规则时内联 SVG 会落到文字基线上，图标比文字高 3px。 */
+.trigger-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.trigger-label .icon {
+  color: var(--text-soft);
+}
+
+.trigger-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .btn-compact .trigger-label {
   gap: 0.375rem;
 }
@@ -488,23 +510,6 @@ h2 {
   justify-content: space-between;
   font-weight: 400;
   padding: 0 0.75rem;
-}
-
-.filter-trigger .trigger-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.filter-trigger .trigger-label .icon {
-  color: var(--text-soft);
-}
-
-.filter-trigger .trigger-label span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .filter-trigger .chevron {
@@ -631,12 +636,6 @@ h2 {
     margin-top: 0;
     display: flex;
   }
-}
-
-.btn-compact .trigger-label span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .sort-control .btn-compact {
